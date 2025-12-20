@@ -7,7 +7,7 @@ import java.time.Instant;
 public class Transaction {
 
 @Id
-private String transationId;
+private String transactionId;
 private String accountId;
 private String merchantId;
 private Double amount;
@@ -20,6 +20,48 @@ public enum Status {
     RRECEIVED,
     PROCESSED,
     FAILED
+}
+public String getTransactionId() {
+    return transactionId;
+}
+public void setTransactionId(String transactionId) {
+	this.transactionId = transactionId;
+}
+public String getAccountId() {
+	return accountId;
+}
+public void setAccountId(String accountId) {
+	this.accountId = accountId;
+}
+public String getMerchantId() {
+	return merchantId;
+}
+public void setMerchantId(String merchantId) {
+	this.merchantId = merchantId;
+}
+public Double getAmount() {
+	return amount;
+}
+public void setAmount(Double amount) {
+	this.amount = amount;
+}
+public String getCurrency() {
+	return currency;
+}
+public void setCurrency(String currency) {
+	this.currency = currency;
+}
+public Instant getTimestamp() {
+	return timestamp;
+}
+public void setTimestamp(Instant timestamp) {
+	this.timestamp = timestamp;
+}
+public Status getStatus() {
+	return status;
+}
+public void setStatus(Status status) {
+	this.status = status;
 }
 
 

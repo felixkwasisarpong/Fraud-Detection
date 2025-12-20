@@ -26,6 +26,42 @@ public class FraudResult {
         PASS,
         FRAUD
     }
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public Transaction getTransaction() {
+		return transaction;
+	}
+	public void setTransaction(Transaction transaction) {
+		this.transaction = transaction;
+	}
+	public Result getResult() {
+		return result;
+	}
+	public void setResult(Result result) {
+		this.result = result;
+	}
+	public String getRuleTriggered() {
+		return ruleTriggered;
+	}
+	public void setRuleTriggered(String ruleTriggered) {
+		this.ruleTriggered = ruleTriggered;
+	}
+	public Double getScore() {
+		return score;
+	}
+	public void setScore(Double score) {
+		this.score = score;
+	}
+	public Instant getEvaluatedAt() {
+		return evaluatedAt;
+	}
+	public void setEvaluatedAt(Instant evaluatedAt) {
+		this.evaluatedAt = evaluatedAt;
+	}
 
 
     
