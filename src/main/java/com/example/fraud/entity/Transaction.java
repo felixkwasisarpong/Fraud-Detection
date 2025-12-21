@@ -14,13 +14,23 @@ private Double amount;
 private String currency;
 private Instant timestamp;
 
-@Enumerated(EnumType.STRING)
-private Status status;
-public enum Status {
-    RRECEIVED,
-    PROCESSED,
-    FAILED
-}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	@Enumerated(EnumType.STRING)
+	private Status status;
+
+	public enum Status {
+		RECEIVED,
+		PROCESSED,
+		FAILED
+	}
 public String getTransactionId() {
     return transactionId;
 }
@@ -57,12 +67,7 @@ public Instant getTimestamp() {
 public void setTimestamp(Instant timestamp) {
 	this.timestamp = timestamp;
 }
-public Status getStatus() {
-	return status;
-}
-public void setStatus(Status status) {
-	this.status = status;
-}
+
 
 
 

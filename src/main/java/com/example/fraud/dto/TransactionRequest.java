@@ -6,7 +6,6 @@ import lombok.Data;
 
 @Data
 public class TransactionRequest {
-	@NotNull
 	private String transactionId;
 	
 	@NotNull
