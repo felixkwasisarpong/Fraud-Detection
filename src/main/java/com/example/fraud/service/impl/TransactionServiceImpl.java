@@ -4,12 +4,13 @@ import com.example.fraud.repository.TransactionRepository;
 import com.example.fraud.service.TransactionService;
 
 import java.time.Instant;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import com.example.fraud.dto.TransactionRequest;
 import com.example.fraud.dto.TransactionResponse;
 import com.example.fraud.entity.Transaction;
-import lombok.RequiredArgsConstructor;
+
 
 
 
@@ -23,7 +24,10 @@ public class TransactionServiceImpl implements TransactionService{
 	@Override
 	public TransactionResponse receiveTransaction(TransactionRequest request) {
 		Transaction txn = new Transaction();
-		txn.setTransactionId(request.getTransactionId());
+		String txnId = request.getTransactionId() != null
+				? request.getTransactionId()
+				: UUID.randomUUID().toString();
+		txn.setTransactionId(txnId);
 		txn.setAccountId(request.getAccountId());
 		txn.setMerchantId(request.getMerchantId());
 		txn.setAmount(request.getAmount());
