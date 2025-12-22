@@ -6,4 +6,5 @@ import com.example.fraud.entity.FraudResult;
 
 public interface FraudResultRepository extends JpaRepository<FraudResult, Long>{
 
+
 }

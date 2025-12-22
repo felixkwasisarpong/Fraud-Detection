@@ -1,0 +1,24 @@
+package com.example.fraud.fraud;
+
+
+import com.example.fraud.event.TransactionEvent;
+import org.springframework.stereotype.Component;
+
+@Component
+public class AmountThresholdRule implements FraudRule{
+    private static final double LIMIT = 5000.0;
+
+    @Override
+    public FraudCheckResult evaluate(TransactionEvent event){
+        System.out.println(
+                "Evaluating fraud rule | txnId=" + event.getTransactionId() +
+                        " amount=" + event.getAmount()
+        );
+        if (event.getAmount() != null && event.getAmount() > LIMIT){
+            return new FraudCheckResult(true, "AMOUNT_EXCEEDS_LIMIT");
+        }
+        return new FraudCheckResult(false, "OK");
+
+    }
+
+}
