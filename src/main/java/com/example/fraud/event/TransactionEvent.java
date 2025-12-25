@@ -18,4 +18,7 @@ public class TransactionEvent {
     private Double amount;
     private String currency;
 
+    private String deviceId;
+    private String ipAddress;
+
 }
