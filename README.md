@@ -13,7 +13,7 @@ are delivered using AWS SNS, SQS, and Lambda. All AWS infrastructure is provisio
 
 ## System Flow
 1. Client submits transaction via REST API
-2. Transaction is persisted and published to Kafka
+2. Transaction is persisted axnd published to Kafka
 3. Fraud Engine consumes and evaluates rules
 4. Fraud result is published to `fraud-results`
 5. Alert Service publishes fraud alerts to SNS

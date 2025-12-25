@@ -2,9 +2,11 @@ package com.example.fraud.fraud;
 
 
 import com.example.fraud.event.TransactionEvent;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
+@Order(2)
 public class AmountThresholdRule implements FraudRule{
     private static final double LIMIT = 5000.0;
 

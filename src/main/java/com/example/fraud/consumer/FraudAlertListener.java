@@ -25,6 +25,7 @@ public class FraudAlertListener {
     public void handleFraudResult(FraudResultEvent event){
         if("FRAUD".equals(event.getDecision())){
             notificationService.sendAlert(event);
+            System.out.println("Fraud Decision: " + event.getReason());
             System.out.println("Alert sent to SNS for " + event.getTransactionId());
         }
     }
