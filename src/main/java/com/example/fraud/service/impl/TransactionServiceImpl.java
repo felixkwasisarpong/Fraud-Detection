@@ -55,6 +55,7 @@ public class TransactionServiceImpl implements TransactionService {
 		event.setMerchantId(txn.getMerchantId());
 		event.setAmount(txn.getAmount());
 		event.setCurrency(txn.getCurrency());
+		event.setTimestamp(txn.getTimestamp());
 
 		kafkaTemplate.send(KafkaTopics.TRANSACTION_TOPIC, txn.getTransactionId(), event)
 				.whenComplete((SendResult<String, Object> result, Throwable ex) -> {

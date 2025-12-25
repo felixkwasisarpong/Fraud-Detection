@@ -2,6 +2,8 @@ package com.example.fraud.event;
 
 import lombok.Data;
 
+import java.time.Instant;
+
 
 @Data
 public class TransactionEvent {
@@ -20,5 +22,6 @@ public class TransactionEvent {
 
     private String deviceId;
     private String ipAddress;
+    private Instant timestamp;
 
 }
