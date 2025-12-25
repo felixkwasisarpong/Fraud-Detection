@@ -24,11 +24,14 @@ public class MLModelRule implements FraudRule{
     }
 
     @Override
-    public FraudCheckResult evaluate(TransactionEvent event){
-        try{
-            int velocity = redis.getVelocity(event.getAccountId());
-            int deviceAccounts = redis.getDeviceAccountCount(event.getAccountId());
-            int pastDeclines = redis.getPastDeclines(event.getAccountId());
+    public FraudCheckResult evaluate(TransactionEvent event,
+                                     int velocity,
+                                     int deviceAccounts,
+                                     int pastDeclines) {
+        try {
+            velocity = redis.getVelocity(event.getAccountId());
+            deviceAccounts = redis.getDeviceAccountCount(event.getAccountId());
+            pastDeclines = redis.getPastDeclines(event.getAccountId());
 
             float[] features = extractor.extract(
                     event,
@@ -38,16 +41,15 @@ public class MLModelRule implements FraudRule{
             );
             float prob = scorer.score(features);
 
-            if (prob >= 0.65) {
-                return new FraudCheckResult(true, "ML_MODEL_SCORE=" + prob);
+            if (prob >= 0.65f) {
+                return FraudCheckResult.fail("ML_MODEL_FRAUD", prob);
             }
+            // ML says it's safe, but still return score for downstream services
+            return FraudCheckResult.pass(prob);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return new FraudCheckResult(false, "ML_MODEL_ERROR");
+            return FraudCheckResult.error("ML_MODEL_ERROR");
         }
-
-        return new FraudCheckResult(false, "ML_MODEL_CLEAN");
     }
-
 }

@@ -17,15 +17,18 @@ public class VelocityRule implements FraudRule{
 
 
     @Override
-    public FraudCheckResult evaluate(TransactionEvent event){
+    public FraudCheckResult evaluate(TransactionEvent event,
+                                     int velocity,
+                                     int deviceAccounts,
+                                     int pastDeclines) {
         boolean exceeded = velocityRuleService.isVelocityExceeded(event.getAccountId());
         if(exceeded){
             return new FraudCheckResult(
                     true,
-                    "VELOCITY_THRESHOLD_EXCEEDED"
+                    "VELOCITY_THRESHOLD_EXCEEDED",0.0f
             );
 
         }
-        return new FraudCheckResult(false, "OK");
+        return new FraudCheckResult(false, "OK",0.0f);
     }
 }

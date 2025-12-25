@@ -14,17 +14,20 @@ public class DeclineRule implements FraudRule {
     }
 
     @Override
-    public FraudCheckResult evaluate(TransactionEvent event) {
+    public FraudCheckResult evaluate(TransactionEvent event,
+                                     int velocity,
+                                     int deviceAccounts,
+                                     int pastDeclines) {
 
-        int pastDeclines = redis.getPastDeclines(event.getAccountId());
+        pastDeclines = redis.getPastDeclines(event.getAccountId());
 
         if (pastDeclines > 2) {
             return new FraudCheckResult(
                     true,
-                    "PAST_DECLINES_EXCEEDED (" + pastDeclines + ")"
+                    "PAST_DECLINES_EXCEEDED (" + pastDeclines + ")",0.0f
             );
         }
 
-        return new FraudCheckResult(false, "DECLINE_RULE_PASS");
+        return new FraudCheckResult(false, "DECLINE_RULE_PASS",0.0f);
     }
 }

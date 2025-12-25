@@ -29,15 +29,19 @@ public class FraudEvaluationServiceImpl implements FraudEvaluationService {
     }
 
     @Override
-    public FraudCheckResult evaluate(TransactionEvent event) {
+    public FraudCheckResult evaluate(
+            TransactionEvent event,
+            int velocity,
+            int deviceAccounts,
+            int pastDeclines) {
 
         for (FraudRule rule : rules) {
-            FraudCheckResult result = rule.evaluate(event);
+            FraudCheckResult result = rule.evaluate(event,velocity,deviceAccounts,pastDeclines);
             if (result.fraud()) {
                 return result;
             }
         }
 
-        return new FraudCheckResult(false, "APPROVED");
+        return new FraudCheckResult(false, "APPROVED",0.0f);
     }
 }

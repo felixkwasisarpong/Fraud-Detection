@@ -11,15 +11,20 @@ public class AmountThresholdRule implements FraudRule{
     private static final double LIMIT = 5000.0;
 
     @Override
-    public FraudCheckResult evaluate(TransactionEvent event){
+    public FraudCheckResult evaluate(TransactionEvent event,
+                                     int velocity,
+                                     int deviceAccounts,
+                                     int pastDeclines
+
+    ){
         System.out.println(
                 "Evaluating fraud rule | txnId=" + event.getTransactionId() +
                         " amount=" + event.getAmount()
         );
         if (event.getAmount() != null && event.getAmount() > LIMIT){
-            return new FraudCheckResult(true, "AMOUNT_EXCEEDS_LIMIT");
+            return new FraudCheckResult(true, "AMOUNT_EXCEEDS_LIMIT",0.0f);
         }
-        return new FraudCheckResult(false, "OK");
+        return new FraudCheckResult(false, "OK",0.0f);
 
     }
 

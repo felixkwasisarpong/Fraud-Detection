@@ -4,6 +4,10 @@ import com.example.fraud.event.TransactionEvent;
 
 public interface FraudRule {
 
-    FraudCheckResult evaluate(TransactionEvent event);
+    FraudCheckResult evaluate(
+            TransactionEvent event,
+            int velocity,
+            int deviceAccounts,
+            int pastDeclines);
 
 }

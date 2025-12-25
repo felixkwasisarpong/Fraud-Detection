@@ -15,10 +15,13 @@ public class DeviceRule implements FraudRule {
     }
 
     @Override
-    public FraudCheckResult evaluate(TransactionEvent event){
+    public FraudCheckResult evaluate(TransactionEvent event,
+                                     int velocity,
+                                     int deviceAccounts,
+                                     int pastDeclines) {
 
         if(event.getDeviceId() == null){
-            return new FraudCheckResult(false,"NO_DEVICE_IP");
+            return new FraudCheckResult(false,"NO_DEVICE_IP",0.0f);
         }
         boolean suspicious = deviceRuleService.isDeviceLinkedToMultipleAccounts(
                 event.getDeviceId(),
@@ -26,8 +29,8 @@ public class DeviceRule implements FraudRule {
         );
 
         if(suspicious){
-            return new FraudCheckResult(true, "DEVICE_LINKED_TO_MULTIPLE_ACCOUNTS");
+            return new FraudCheckResult(true, "DEVICE_LINKED_TO_MULTIPLE_ACCOUNTS",0.0f);
         }
-        return new FraudCheckResult(false,"OK");
+        return new FraudCheckResult(false,"OK",0.0f);
     }
 }
