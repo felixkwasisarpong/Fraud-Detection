@@ -8,6 +8,8 @@ import com.example.fraud.fraud.FraudCheckResult;
 import com.example.fraud.redis.RedisStateStore;
 import com.example.fraud.repository.FraudResultRepository;
 import com.example.fraud.service.FraudEvaluationService;
+import com.example.fraud.service.FraudMetricsService;
+import org.slf4j.MDC;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
@@ -23,20 +25,27 @@ public class TransactionListener {
     private final FraudResultRepository fraudResultRepository;
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final RedisStateStore redis;
+    private final FraudMetricsService fraudMetricsService;
     public TransactionListener(FraudEvaluationService fraudService,
                                FraudResultRepository fraudResultRepository,
                                KafkaTemplate<String, Object> kafkaTemplate,
-                               RedisStateStore redis
+                               RedisStateStore redis,
+                               FraudMetricsService fraudMetricsService
     ) {
         this.fraudService = fraudService;
         this.fraudResultRepository = fraudResultRepository;
         this.kafkaTemplate = kafkaTemplate;
         this.redis = redis;
+        this.fraudMetricsService = fraudMetricsService;
     }
 
-
+    private void attachTrace(TransactionEvent event) {
+        MDC.put("transactionId", event.getTransactionId());
+    }
     @KafkaListener(topics = KafkaTopics.TRANSACTION_TOPIC, groupId = "fraud-engine-app-group")
+
     public void processTransaction(TransactionEvent event){
+        attachTrace(event);
         //update redis state
         int velocity = redis.incrementVelocity(event.getAccountId());
         int deviceAccounts = redis.addDeviceAccount(event.getDeviceId(), event.getAccountId());
@@ -70,7 +79,7 @@ public class TransactionListener {
 
 
         kafkaTemplate.send(KafkaTopics.FRAUD_RESULTS_TOPIC, event.getTransactionId(), out);
-
+        fraudMetricsService.recordDecision(check);
         System.out.println("Fraud Evaluation Complete: " + result.getResult());
 
 

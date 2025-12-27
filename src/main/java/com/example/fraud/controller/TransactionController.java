@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.slf4j.MDC;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -23,8 +23,15 @@ public class TransactionController {
 		this.transactionService = transactionService;
 		this.fraudScoringService = fraudScoringService;
 	}
+
+
+
+	private void attachTrace(String transactionId) {
+		MDC.put("transactionId", transactionId);
+	}
 	@PostMapping
 	public ResponseEntity<TransactionResponse> receiveTransaction(@Valid @RequestBody TransactionRequest request){
+		attachTrace(request.getTransactionId());
 		TransactionResponse response = transactionService.receiveTransaction(request);
 		return ResponseEntity.ok(response);
 	}

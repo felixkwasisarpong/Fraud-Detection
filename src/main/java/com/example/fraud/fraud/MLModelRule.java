@@ -5,6 +5,8 @@ import com.example.fraud.event.TransactionEvent;
 import com.example.fraud.ml.FeatureExtractor;
 import com.example.fraud.redis.RedisStateStore;
 import com.example.fraud.service.FraudScoringService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,7 +14,7 @@ public class MLModelRule implements FraudRule{
     private final FeatureExtractor extractor;
     private final FraudScoringService scorer;
     private final RedisStateStore redis;
-
+    private static final Logger log = LoggerFactory.getLogger(AmountThresholdRule.class);
     public MLModelRule(
             FeatureExtractor extractor,
             FraudScoringService scorer,
@@ -28,6 +30,7 @@ public class MLModelRule implements FraudRule{
                                      int velocity,
                                      int deviceAccounts,
                                      int pastDeclines) {
+        FraudCheckResult result;
         try {
             velocity = redis.getVelocity(event.getAccountId());
             deviceAccounts = redis.getDeviceAccountCount(event.getAccountId());
@@ -42,14 +45,23 @@ public class MLModelRule implements FraudRule{
             float prob = scorer.score(features);
 
             if (prob >= 0.65f) {
-                return FraudCheckResult.fail("ML_MODEL_FRAUD", prob);
+                result = FraudCheckResult.fail("ML_MODEL_FRAUD", prob);
+            }else {
+                // ML says it's safe, but still return score for downstream services
+                result = FraudCheckResult.pass(prob);
             }
-            // ML says it's safe, but still return score for downstream services
-            return FraudCheckResult.pass(prob);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return FraudCheckResult.error("ML_MODEL_ERROR");
+            result = FraudCheckResult.error("ML_MODEL_ERROR");
         }
+        log.info("RuleExecuted: rule={} txnId={} fraud={} reason={} score={}",
+                this.getClass().getSimpleName(),
+                event.getTransactionId(),
+                result.fraud(),
+                result.reason(),
+                result.score());
+
+        return result;
     }
 }
