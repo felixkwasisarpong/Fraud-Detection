@@ -4,3 +4,4 @@
 *.tfstate.backup
 crash.log
 key
+terraform.tfvars
