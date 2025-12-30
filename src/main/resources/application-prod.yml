@@ -1,0 +1,84 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: fraud-engine
+
+  datasource:
+    spring:
+      datasource:
+        url: jdbc:postgresql://fraud-engine-db.c1y4ug8qgsl3.us-east-2.rds.amazonaws.com:5432/frauddb
+        username: fraud_user
+        password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update        # IMPORTANT: never use update in prod
+    show-sql: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    admin:
+      fail-fast: false
+
+    listener:
+        missing-topics-fatal: false
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+    consumer:
+      group-id: fraud-engine-app-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.example.fraud.event
+        spring.json.value.default.type: com.example.fraud.event.TransactionEvent
+        spring.json.use.type.headers: false
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
+      timeout: 2000
+
+aws:
+  sns:
+    fraud-alerts-topic-arn: ${FRAUD_ALERTS_TOPIC_ARN}
+
+fraud:
+  amount:
+    threshold: 5000
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: health
+
+  endpoint:
+    health:
+      probes:
+        enabled: true     # 🔑 THIS IS THE KEY
+      show-details: never
+
+  health:
+    kafka:
+      enabled: false     # optional but recommended for MSK startup
+
+  metrics:
+    tags:
+      application: fraud-engine
+
+logging:
+  level:
+    root: INFO
+    org.springframework.kafka: INFO
+    com.example.fraud: INFO
